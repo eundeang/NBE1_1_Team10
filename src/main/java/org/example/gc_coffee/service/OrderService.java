@@ -6,7 +6,7 @@ import java.util.List;
 
 public interface OrderService {
 
-    OrderDto getOrderByEmail(String email);
+    List<OrderDto> getOrderByEmail(String email);
 
     List<OrderDto> getAllOrders();
 
