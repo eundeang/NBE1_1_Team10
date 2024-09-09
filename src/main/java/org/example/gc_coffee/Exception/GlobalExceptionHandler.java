@@ -14,7 +14,12 @@ public class GlobalExceptionHandler {
     public ResponseEntity<CommonResponseDto<?>> handleEntityNotFoundException(EntityNotFoundException ex) {
         CommonResponseDto<?> response = new CommonResponseDto<>(HttpStatus.NOT_FOUND.value(), ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.NOT_FOUND).body(response);
+    }
 
+    @ExceptionHandler(IllegalArgumentException.class)
+    public ResponseEntity<CommonResponseDto<?>> handleIllegalArgumentException(IllegalArgumentException ex) {
+        CommonResponseDto<?> response = new CommonResponseDto<>(HttpStatus.BAD_REQUEST.value(), ex.getMessage(), null);
+        return ResponseEntity.status(HttpStatus.BAD_REQUEST).body(response);
     }
 
     @ExceptionHandler(AlreadyExistsException.class)
@@ -25,7 +30,7 @@ public class GlobalExceptionHandler {
 
     @ExceptionHandler(Exception.class)
     public ResponseEntity<CommonResponseDto<?>> handleAllExceptions(Exception ex) {
-        CommonResponseDto<?> response = new CommonResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An error occurred", null);
+        CommonResponseDto<?> response = new CommonResponseDto<>(HttpStatus.INTERNAL_SERVER_ERROR.value(), "An unexpected error occurred: " + ex.getMessage(), null);
         return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(response);
     }
 }
