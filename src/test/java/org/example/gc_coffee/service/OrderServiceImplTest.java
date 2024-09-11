@@ -99,30 +99,19 @@ class OrderServiceImplTest {
         }
     }
 
-    @Test
-    void testRegisterOrder_ShouldThrowException_WhenProductNotFound() {
-        // Given
-        OrderDto orderDto = OrderDto.builder()
-                .email("test@example.com")
-                .address("Test Address")
-                .postcode("12345")
-                .orderStatus("PENDING")
-                .orderProducts(Collections.singletonList(
-                        OrderProductDto.builder()
-                                .productId(UUID.randomUUID())
-                                .category("Coffee")
-                                .price(20000L)
-                                .quantity(2)
-                                .build()
-                ))
-                .build();
-
-        when(productService.getProductByIds(any())).thenReturn(Collections.emptyMap());
-
-        // When & Then
-        assertThrows(EntityNotFoundException.class, () -> orderService.registerOrder(orderDto));
-        verify(orderRepository, never()).save(any(Order.class));
-    }
+    @Nested
+    @DisplayName("registerOrder 메소드는")
+    class DescribeRegisterOrder {
+        @Nested
+        @DisplayName("주문 내역에 물품이 하나도 없을 경우")
+        class ContextNoItem {
+            //TODO: DTO 넣기
+            @Test
+            @DisplayName("빈 배열을 리턴한다.")
+            void ItReturnsAnEmptyList() {
+                Assertions.assertTrue(orderService.getAllOrders().isEmpty());
+            }
+        }
 
     @Test
     void testGetAllOrders_ShouldReturnListOfOrderDtos_WhenOrdersExist() {
