@@ -1,8 +1,10 @@
 package org.example.gc_coffee.controller;
 
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.example.gc_coffee.dto.OrderDto;
-import org.example.gc_coffee.dto.response.ApiResponseDto;
+import org.example.gc_coffee.dto.request.OrderReqDto;
+import org.example.gc_coffee.dto.response.OrderResDto;
+import org.example.gc_coffee.dto.common.ApiResponseDto;
 import org.example.gc_coffee.service.OrderService;
 import org.springframework.web.bind.annotation.*;
 
@@ -16,20 +18,20 @@ public class OrderController {
     private final OrderService orderService;
 
     @GetMapping("/{email}")
-    public ApiResponseDto<List<OrderDto>> getOrderByEmail(@PathVariable(value = "email") String email) {
-        List<OrderDto> orderDtoList = orderService.getOrderByEmail(email);
-        return new ApiResponseDto<>("Order retrieved successfully", orderDtoList);
+    public ApiResponseDto<List<OrderResDto>> getOrderByEmail(@PathVariable(value = "email") String email) {
+        List<OrderResDto> orderResDtoList = orderService.getOrderByEmail(email);
+        return new ApiResponseDto<>("Order retrieved successfully", orderResDtoList);
     }
 
     @GetMapping("/all")
-    public ApiResponseDto<List<OrderDto>> getAllOrder() {
-        List<OrderDto> orders = orderService.getAllOrders();
+    public ApiResponseDto<List<OrderResDto>> getAllOrder() {
+        List<OrderResDto> orders = orderService.getAllOrders();
         return new ApiResponseDto<>("Orders retrieved successfully", orders);
     }
 
     @PostMapping
-    public ApiResponseDto<String> registerOrder(@RequestBody OrderDto orderDto) {
-        orderService.registerOrder(orderDto);
+    public ApiResponseDto<String> registerOrder(@RequestBody @Valid OrderReqDto orderReqDto) {
+        orderService.registerOrder(orderReqDto);
         return new ApiResponseDto<>(201, "Order registered successfully \n당일 오후 2시 이후의 주문은 다음날 배송을 시작합니다.", null);
     }
 }
