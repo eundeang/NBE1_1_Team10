@@ -1,8 +1,9 @@
 package org.example.gc_coffee.service;
 
-import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.example.gc_coffee.Exception.BadRequestException;
+import org.example.gc_coffee.Exception.InternalServerErrorException;
 import org.example.gc_coffee.dto.request.OrderProductReqDto;
 import org.example.gc_coffee.dto.request.OrderReqDto;
 import org.example.gc_coffee.dto.response.OrderResDto;
@@ -17,6 +18,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
+
+import static org.example.gc_coffee.Exception.ExceptionCode.NOT_FOUND_PRODUCT_ID;
+import static org.example.gc_coffee.Exception.ExceptionCode.INTERNAL_SERVER_ERROR;
 
 @Service
 @RequiredArgsConstructor
@@ -39,7 +43,7 @@ public class OrderServiceImpl implements OrderService {
 
         } catch (Exception e) {
             log.error("Error occurred while fetching order by email: {}", email, e);
-            throw e;
+            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -55,7 +59,7 @@ public class OrderServiceImpl implements OrderService {
                     .toList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all orders", e);
-            throw e;
+            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR);
         }
     }
 
@@ -84,7 +88,7 @@ public class OrderServiceImpl implements OrderService {
                         Product product = productMap.get(orderProductDto.productId());
 
                         if (product == null) {
-                            throw new EntityNotFoundException("Product not found with ID: " + orderProductDto.productId());
+                            throw new BadRequestException(NOT_FOUND_PRODUCT_ID);
                         }
 
                         return orderProductDto.toEntity(order, product); // DTO의 toEntity 메서드 사용
@@ -98,12 +102,12 @@ public class OrderServiceImpl implements OrderService {
             orderProductService.registerOrderProducts(orderProductEntities);
 
             log.info("Order successfully registered with ID: {}", order.getId());
-        } catch (EntityNotFoundException e) {
+        } catch (BadRequestException e) {
             log.error("Error during order registration - Product not found", e);
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while registering order", e);
-            throw e;
+            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR);
         }
     }
 }
