@@ -1,4 +1,4 @@
-package org.example.gc_coffee.dto;
+package org.example.gc_coffee.dto.response;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -11,11 +11,11 @@ import java.util.List;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class OrderDto extends BaseDto {
+public class OrderResDto extends BaseResDto {
     private UUID id;
     private String email;
     private String address;
     private String postcode;
     private String orderStatus;
-    private List<OrderProductDto> orderProducts; // 주문 항목 목록
+    private List<OrderProductResDto> orderProducts; // 주문 항목 목록
 }

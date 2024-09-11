@@ -1,4 +1,4 @@
-package org.example.gc_coffee.dto;
+package org.example.gc_coffee.dto.response;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,7 +10,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public abstract class BaseDto {
+public abstract class BaseResDto {
     private LocalDateTime createdAt;
     private LocalDateTime updatedAt;
 }

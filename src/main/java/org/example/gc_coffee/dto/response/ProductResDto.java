@@ -1,4 +1,4 @@
-package org.example.gc_coffee.dto;
+package org.example.gc_coffee.dto.response;
 
 import lombok.*;
 import lombok.experimental.SuperBuilder;
@@ -10,7 +10,7 @@ import java.util.UUID;
 @NoArgsConstructor
 @AllArgsConstructor
 @SuperBuilder
-public class ProductDto extends BaseDto {
+public class ProductResDto extends BaseResDto {
     private UUID id;
     private String name;
     private String category;

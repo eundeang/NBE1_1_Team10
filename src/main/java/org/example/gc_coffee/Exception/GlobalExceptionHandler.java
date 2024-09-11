@@ -1,7 +1,7 @@
 package org.example.gc_coffee.Exception;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.gc_coffee.dto.response.ApiResponseDto;
+import org.example.gc_coffee.dto.common.ApiResponseDto;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ControllerAdvice;
 import org.springframework.web.bind.annotation.ExceptionHandler;

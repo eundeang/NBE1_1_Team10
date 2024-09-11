@@ -3,8 +3,10 @@ package org.example.gc_coffee.service;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
-import org.example.gc_coffee.dto.OrderDto;
-import org.example.gc_coffee.dto.OrderProductDto;
+import org.example.gc_coffee.dto.request.OrderProductReqDto;
+import org.example.gc_coffee.dto.request.OrderReqDto;
+import org.example.gc_coffee.dto.response.OrderResDto;
+import org.example.gc_coffee.dto.response.OrderProductResDto;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.entity.OrderProduct;
 import org.example.gc_coffee.entity.Product;
@@ -27,7 +29,7 @@ public class OrderServiceImpl implements OrderService {
     private final ProductService productService;
 
     @Override
-    public List<OrderDto> getOrderByEmail(String email) {
+    public List<OrderResDto> getOrderByEmail(String email) {
         try {
             // 페치 조인을 사용한 메서드를 호출하여 Order와 연관된 OrderProduct들을 한 번에 가져옴
             List<Order> orders = orderRepository.findAllByEmailWithOrderProducts(email);
@@ -43,7 +45,7 @@ public class OrderServiceImpl implements OrderService {
     }
 
     @Override
-    public List<OrderDto> getAllOrders() {
+    public List<OrderResDto> getAllOrders() {
         try {
             // 페치 조인을 사용하여 모든 Order와 연관된 OrderProduct를 한 번에 가져옴
             List<Order> orders = orderRepository.findAllWithOrderProducts();
@@ -60,24 +62,24 @@ public class OrderServiceImpl implements OrderService {
 
     @Override
     @Transactional
-    public void registerOrder(OrderDto orderDto) {
+    public void registerOrder(OrderReqDto orderReqDto) {
         try {
             Order order = Order.builder()
                     .id(UUID.randomUUID())
-                    .email(orderDto.getEmail())
-                    .address(orderDto.getAddress())
-                    .postcode(orderDto.getPostcode())
-                    .orderStatus(orderDto.getOrderStatus())
+                    .email(orderReqDto.getEmail())
+                    .address(orderReqDto.getAddress())
+                    .postcode(orderReqDto.getPostcode())
+                    .orderStatus("REGISTER") // TODO ENUM
                     .orderProducts(new ArrayList<>())
                     .build();
 
-            List<UUID> productIds = orderDto.getOrderProducts().stream()
-                    .map(OrderProductDto::getProductId)
+            List<UUID> productIds = orderReqDto.getOrderProductList().stream()
+                    .map(OrderProductReqDto::getProductId)
                     .toList();
 
             Map<UUID, Product> productMap = productService.getProductByIds(productIds);
 
-            orderDto.getOrderProducts().forEach(orderProductDto -> {
+            orderReqDto.getOrderProductList().forEach(orderProductDto -> {
                 Product product = productMap.get(orderProductDto.getProductId());
 
                 if (product == null) {
@@ -106,16 +108,16 @@ public class OrderServiceImpl implements OrderService {
         }
     }
 
-    private static OrderDto buildOrderDto(Order order) {
+    private static OrderResDto buildOrderDto(Order order) {
         try {
-            return OrderDto.builder()
+            return OrderResDto.builder()
                     .id(order.getId())
                     .email(order.getEmail())
                     .address(order.getAddress())
                     .postcode(order.getPostcode())
                     .orderStatus(order.getOrderStatus())
                     .orderProducts(order.getOrderProducts().stream()
-                            .map(opd -> OrderProductDto.builder()
+                            .map(opd -> OrderProductResDto.builder()
                                     .seq(opd.getSeq())
                                     .orderId(opd.getOrder().getId())
                                     .productId(opd.getProduct().getId())

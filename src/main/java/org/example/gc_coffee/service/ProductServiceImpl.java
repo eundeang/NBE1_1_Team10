@@ -4,7 +4,8 @@ import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.example.gc_coffee.Exception.AlreadyExistsException;
-import org.example.gc_coffee.dto.ProductDto;
+import org.example.gc_coffee.dto.request.ProductReqDto;
+import org.example.gc_coffee.dto.response.ProductResDto;
 import org.example.gc_coffee.entity.Product;
 import org.example.gc_coffee.repository.ProductRepository;
 import org.springframework.stereotype.Service;
@@ -22,12 +23,12 @@ public class ProductServiceImpl implements ProductService {
     private final ProductRepository productRepository;
 
     @Override
-    public ProductDto getProductByNames(String name) {
+    public ProductResDto getProductByNames(String name) {
         try {
             Product product = productRepository.findByName(name)
                     .orElseThrow(EntityNotFoundException::new);
 
-            return ProductDto.builder()
+            return ProductResDto.builder()
                     .id(product.getId())
                     .name(product.getName())
                     .category(product.getCategory())
@@ -46,12 +47,12 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public List<ProductDto> getAllProducts() {
+    public List<ProductResDto> getAllProducts() {
         try {
             List<Product> products = productRepository.findAll();
 
             return products.stream()
-                    .map(product -> ProductDto.builder()
+                    .map(product -> ProductResDto.builder()
                             .id(product.getId())
                             .name(product.getName())
                             .category(product.getCategory())
@@ -69,20 +70,20 @@ public class ProductServiceImpl implements ProductService {
 
     // 서비스 클래스 내 메서드
     @Override
-    public void registerProduct(ProductDto productDto) {
+    public void registerProduct(ProductReqDto productReqDto) {
         try {
             // 이미 동일한 이름의 제품이 존재하는지 확인
-            boolean exists = productRepository.existsByName(productDto.getName());
+            boolean exists = productRepository.existsByName(productReqDto.getName());
             if (exists) {
                 throw new AlreadyExistsException("Product with this name already exists.");
             }
 
             Product product = Product.builder()
                     .id(UUID.randomUUID()) // 새 제품 등록이므로 새로운 UUID 생성
-                    .name(productDto.getName())
-                    .category(productDto.getCategory())
-                    .price(productDto.getPrice())
-                    .description(productDto.getDescription())
+                    .name(productReqDto.getName())
+                    .category(productReqDto.getCategory())
+                    .price(productReqDto.getPrice())
+                    .description(productReqDto.getDescription())
                     .build();
 
             productRepository.save(product);
