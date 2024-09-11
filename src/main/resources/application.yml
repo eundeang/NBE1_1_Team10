@@ -4,3 +4,9 @@ spring:
     username: ${LOCAL_USERNAME}
     password: ${LOCAL_PASSWORD}
     driver-class-name: com.mysql.cj.jdbc.Driver
+
+  jpa:
+    show-sql: true # JPA가 실행하는 SQL 쿼리를 출력하도록 설정
+    properties:
+      hibernate:
+        format_sql: true # 출력되는 SQL을 보기 좋게 정렬
