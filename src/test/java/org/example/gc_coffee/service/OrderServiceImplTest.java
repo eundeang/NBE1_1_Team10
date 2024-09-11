@@ -51,7 +51,6 @@ class OrderServiceImplTest {
                 Assertions.assertTrue(orderService.getOrderByEmail(email).isEmpty());
             }
         }
-        verify(orderRepository, times(1)).findAllByEmailWithOrderProducts(email);
 
         @Nested
         @DisplayName("이메일에 해당하는 주문이 있는 경우")
@@ -69,6 +68,35 @@ class OrderServiceImplTest {
             }
         }
     }
+
+    @Nested
+    @DisplayName("getAllOrders 메소드는")
+    class DescribeGetAllOrder {
+        @Nested
+        @DisplayName("주문이 하나도 없는 경우")
+        class ContextNoOrder {
+            @Test
+            @DisplayName("빈 배열을 리턴한다.")
+            void ItReturnsAnEmptyList() {
+                Assertions.assertTrue(orderService.getAllOrders().isEmpty());
+            }
+        }
+
+        @Nested
+        @DisplayName("이메일에 해당하는 주문이 있는 경우")
+        class ContextExistOrder {
+            @Test
+            @DisplayName("저장된 모든 주문 배열을 리턴한다.")
+            void ItReturnsNotEmptyArray() {
+                orderRepository.save(
+                        Order.builder()
+                                .email(email)
+                                .build()
+                );
+                Assertions.assertEquals(orderRepository.findAll(),
+                        orderService.getOrderByEmail(email));
+            }
+        }
     }
 
     @Test
