@@ -1,11 +1,10 @@
 package org.example.gc_coffee.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.gc_coffee.dto.OrderDto;
-import org.example.gc_coffee.dto.OrderProductDto;
+import org.example.gc_coffee.dto.request.OrderReqDto;
+import org.example.gc_coffee.dto.response.OrderResDto;
+import org.example.gc_coffee.dto.response.OrderProductResDto;
 import org.example.gc_coffee.entity.Order;
-import org.example.gc_coffee.entity.OrderProduct;
-import org.example.gc_coffee.entity.Product;
 import org.example.gc_coffee.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -47,12 +46,12 @@ class OrderServiceImplTest {
         when(orderRepository.findAllByEmailWithOrderProducts(email)).thenReturn(List.of(order));
 
         // When
-        List<OrderDto> result = orderService.getOrderByEmail(email);
+        List<OrderResDto> result = orderService.getOrderByEmail(email);
 
         // Then
         assertNotNull(result);
-        for (OrderDto orderDto : result) {
-            assertEquals(email, orderDto.getEmail());
+        for (OrderResDto orderResDto : result) {
+            assertEquals(email, orderResDto.getEmail());
         }
         verify(orderRepository, times(1)).findAllByEmailWithOrderProducts(email);
     }
@@ -60,25 +59,17 @@ class OrderServiceImplTest {
     @Test
     void testRegisterOrder_ShouldThrowException_WhenProductNotFound() {
         // Given
-        OrderDto orderDto = OrderDto.builder()
+        OrderReqDto orderReqDto = OrderReqDto.builder()
                 .email("test@example.com")
                 .address("Test Address")
                 .postcode("12345")
-                .orderStatus("PENDING")
-                .orderProducts(Collections.singletonList(
-                        OrderProductDto.builder()
-                                .productId(UUID.randomUUID())
-                                .category("Coffee")
-                                .price(20000L)
-                                .quantity(2)
-                                .build()
-                ))
+                .orderProductList(null)
                 .build();
 
         when(productService.getProductByIds(any())).thenReturn(Collections.emptyMap());
 
         // When & Then
-        assertThrows(EntityNotFoundException.class, () -> orderService.registerOrder(orderDto));
+        assertThrows(EntityNotFoundException.class, () -> orderService.registerOrder(orderReqDto));
         verify(orderRepository, never()).save(any(Order.class));
     }
 
@@ -97,7 +88,7 @@ class OrderServiceImplTest {
         when(orderRepository.findAllWithOrderProducts()).thenReturn(Collections.singletonList(order));
 
         // When
-        List<OrderDto> result = orderService.getAllOrders();
+        List<OrderResDto> result = orderService.getAllOrders();
 
         // Then
         assertNotNull(result);
