@@ -1,23 +1,11 @@
 package org.example.gc_coffee.service;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertNotNull;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.never;
-import static org.mockito.Mockito.times;
-import static org.mockito.Mockito.verify;
-import static org.mockito.Mockito.when;
-
-import jakarta.persistence.EntityNotFoundException;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.List;
-import java.util.UUID;
-import org.example.gc_coffee.dto.OrderDto;
-import org.example.gc_coffee.dto.OrderProductDto;
+import org.example.gc_coffee.dto.EmailGenerator;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.repository.OrderRepository;
+import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.DisplayName;
+import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
@@ -128,16 +116,5 @@ class OrderServiceImplTest {
                         orderService.getOrderByEmail(email));
             }
         }
-    }
-
-        when(orderRepository.findAllWithOrderProducts()).thenReturn(Collections.singletonList(order));
-
-        // When
-        List<OrderDto> result = orderService.getAllOrders();
-
-        // Then
-        assertNotNull(result);
-        assertEquals(1, result.size());
-        verify(orderRepository, times(1)).findAllWithOrderProducts();
     }
 }
