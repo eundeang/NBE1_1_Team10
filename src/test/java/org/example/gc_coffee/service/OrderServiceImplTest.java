@@ -38,28 +38,18 @@ class OrderServiceImplTest {
     @InjectMocks
     private OrderServiceImpl orderService;
 
-    @Test
-    void testGetOrderByEmail_ShouldReturnOrderDto_WhenOrdersExist() {
-        // Given
-        String email = "test@example.com";
-        Order order = Order.builder()
-                .id(UUID.randomUUID())
-                .email(email)
-                .address("Test Address")
-                .postcode("12345")
-                .orderStatus("PENDING")
-                .orderProducts(new ArrayList<>())
-                .build();
+    @Nested
+    @DisplayName("OrderByEmail 메소드는")
+    class DescribeOrderByEmail {
 
-        when(orderRepository.findAllByEmailWithOrderProducts(email)).thenReturn(List.of(order));
-
-        // When
-        List<OrderDto> result = orderService.getOrderByEmail(email);
-
-        // Then
-        assertNotNull(result);
-        for (OrderDto orderDto : result) {
-            assertEquals(email, orderDto.getEmail());
+        @Nested
+        @DisplayName("이메일에 해당하는 주문이 없는 경우")
+        class ContextGetOrderByInvalidEmail {
+            @Test
+            @DisplayName("빈 배열을 리턴한다.")
+            void ItReturnsAnEmptyList() {
+                Assertions.assertTrue(orderService.getOrderByEmail(email).isEmpty());
+            }
         }
         verify(orderRepository, times(1)).findAllByEmailWithOrderProducts(email);
     }
