@@ -11,7 +11,6 @@ import org.example.gc_coffee.repository.ProductRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 import java.util.stream.Collectors;
 
@@ -28,15 +27,8 @@ public class ProductServiceImpl implements ProductService {
             Product product = productRepository.findByName(name)
                     .orElseThrow(EntityNotFoundException::new);
 
-            return ProductResDto.builder()
-                    .id(product.getId())
-                    .name(product.getName())
-                    .category(product.getCategory())
-                    .price(product.getPrice())
-                    .description(product.getDescription())
-                    .createdAt(product.getCreatedAt())
-                    .updatedAt(product.getUpdatedAt())
-                    .build();
+            // 엔티티에서 DTO로 변환하는 메서드 사용
+            return ProductResDto.from(product);
         } catch (EntityNotFoundException e) {
             log.error("Product not found with name: {}", name, e);
             throw e;
@@ -51,16 +43,9 @@ public class ProductServiceImpl implements ProductService {
         try {
             List<Product> products = productRepository.findAll();
 
+            // 엔티티 리스트를 DTO 리스트로 변환
             return products.stream()
-                    .map(product -> ProductResDto.builder()
-                            .id(product.getId())
-                            .name(product.getName())
-                            .category(product.getCategory())
-                            .price(product.getPrice())
-                            .description(product.getDescription())
-                            .createdAt(product.getCreatedAt())
-                            .updatedAt(product.getUpdatedAt())
-                            .build())
+                    .map(ProductResDto::from)
                     .collect(Collectors.toList());
         } catch (Exception e) {
             log.error("Error occurred while fetching all products", e);
@@ -68,23 +53,17 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
-    // 서비스 클래스 내 메서드
     @Override
     public void registerProduct(ProductReqDto productReqDto) {
         try {
             // 이미 동일한 이름의 제품이 존재하는지 확인
-            boolean exists = productRepository.existsByName(productReqDto.getName());
+            boolean exists = productRepository.existsByName(productReqDto.name());
             if (exists) {
                 throw new AlreadyExistsException("Product with this name already exists.");
             }
 
-            Product product = Product.builder()
-                    .id(UUID.randomUUID()) // 새 제품 등록이므로 새로운 UUID 생성
-                    .name(productReqDto.getName())
-                    .category(productReqDto.getCategory())
-                    .price(productReqDto.getPrice())
-                    .description(productReqDto.getDescription())
-                    .build();
+            // DTO에서 엔티티로 변환하는 메서드 사용
+            Product product = productReqDto.toEntity();
 
             productRepository.save(product);
             log.info("Product registered successfully with ID: {}", product.getId());
@@ -98,11 +77,9 @@ public class ProductServiceImpl implements ProductService {
     }
 
     @Override
-    public Map<UUID, Product> getProductByIds(List<UUID> productIds) {
+    public List<Product> getProductByIds(List<UUID> productIds) {
         try {
-            List<Product> products = productRepository.findAllById(productIds);
-            return products.stream()
-                    .collect(Collectors.toMap(Product::getId, product -> product));
+            return productRepository.findAllById(productIds);
         } catch (Exception e) {
             log.error("Error occurred while fetching products by IDs", e);
             throw e;

@@ -6,7 +6,6 @@ import lombok.extern.slf4j.Slf4j;
 import org.example.gc_coffee.dto.request.OrderProductReqDto;
 import org.example.gc_coffee.dto.request.OrderReqDto;
 import org.example.gc_coffee.dto.response.OrderResDto;
-import org.example.gc_coffee.dto.response.OrderProductResDto;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.entity.OrderProduct;
 import org.example.gc_coffee.entity.Product;
@@ -14,7 +13,6 @@ import org.example.gc_coffee.repository.OrderRepository;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -27,6 +25,7 @@ public class OrderServiceImpl implements OrderService {
 
     private final OrderRepository orderRepository;
     private final ProductService productService;
+    private final OrderProductService orderProductService;
 
     @Override
     public List<OrderResDto> getOrderByEmail(String email) {
@@ -35,7 +34,7 @@ public class OrderServiceImpl implements OrderService {
             List<Order> orders = orderRepository.findAllByEmailWithOrderProducts(email);
 
             return orders.stream()
-                    .map(OrderServiceImpl::buildOrderDto)
+                    .map(OrderResDto::from) // DTO의 정적 메서드 사용
                     .toList();
 
         } catch (Exception e) {
@@ -50,9 +49,9 @@ public class OrderServiceImpl implements OrderService {
             // 페치 조인을 사용하여 모든 Order와 연관된 OrderProduct를 한 번에 가져옴
             List<Order> orders = orderRepository.findAllWithOrderProducts();
 
-            // Order 엔티티들을 OrderDto로 변환
+            // Order 엔티티들을 OrderResDto로 변환
             return orders.stream()
-                    .map(OrderServiceImpl::buildOrderDto)
+                    .map(OrderResDto::from) // DTO의 정적 메서드 사용
                     .toList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all orders", e);
@@ -64,39 +63,39 @@ public class OrderServiceImpl implements OrderService {
     @Transactional
     public void registerOrder(OrderReqDto orderReqDto) {
         try {
-            Order order = Order.builder()
-                    .id(UUID.randomUUID())
-                    .email(orderReqDto.getEmail())
-                    .address(orderReqDto.getAddress())
-                    .postcode(orderReqDto.getPostcode())
-                    .orderStatus("REGISTER") // TODO ENUM
-                    .orderProducts(new ArrayList<>())
-                    .build();
+            Order order = orderReqDto.toEntity();
+            orderRepository.save(order);
 
-            List<UUID> productIds = orderReqDto.getOrderProductList().stream()
-                    .map(OrderProductReqDto::getProductId)
+            // 상품 ID 목록 추출
+            List<UUID> productIds = orderReqDto.orderProductList().stream()
+                    .map(OrderProductReqDto::productId)
                     .toList();
 
-            Map<UUID, Product> productMap = productService.getProductByIds(productIds);
+            // 상품 ID로 Product 엔티티 조회
+            List<Product> products = productService.getProductByIds(productIds);
 
-            orderReqDto.getOrderProductList().forEach(orderProductDto -> {
-                Product product = productMap.get(orderProductDto.getProductId());
+            // Product 엔티티를 Map 형태로 변환하여 매핑
+            Map<UUID, Product> productMap = products.stream()
+                    .collect(Collectors.toMap(Product::getId, product -> product));
 
-                if (product == null) {
-                    throw new EntityNotFoundException("Product not found with ID: " + orderProductDto.getProductId());
-                }
+            // OrderProduct 리스트 생성
+            List<OrderProduct> orderProductEntities = orderReqDto.orderProductList().stream()
+                    .map(orderProductDto -> {
+                        Product product = productMap.get(orderProductDto.productId());
 
-                OrderProduct orderProduct = OrderProduct.builder()
-                        .order(order)
-                        .product(product)
-                        .category(orderProductDto.getCategory())
-                        .price(orderProductDto.getPrice())
-                        .quantity(orderProductDto.getQuantity())
-                        .build();
-                order.addOrderProduct(orderProduct);
-            });
+                        if (product == null) {
+                            throw new EntityNotFoundException("Product not found with ID: " + orderProductDto.productId());
+                        }
 
-            orderRepository.save(order);
+                        return orderProductDto.toEntity(order, product); // DTO의 toEntity 메서드 사용
+                    })
+                    .collect(Collectors.toList());
+
+            // OrderReqDto의 toEntity 메서드를 사용하여 Order 엔티티 생성
+//            Order order = orderReqDto.toEntity(orderProductEntities); // DTO의 toEntity 메서드 사용
+
+            // 주문 상품 저장
+            orderProductService.registerOrderProducts(orderProductEntities);
 
             log.info("Order successfully registered with ID: {}", order.getId());
         } catch (EntityNotFoundException e) {
@@ -104,35 +103,6 @@ public class OrderServiceImpl implements OrderService {
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while registering order", e);
-            throw e;
-        }
-    }
-
-    private static OrderResDto buildOrderDto(Order order) {
-        try {
-            return OrderResDto.builder()
-                    .id(order.getId())
-                    .email(order.getEmail())
-                    .address(order.getAddress())
-                    .postcode(order.getPostcode())
-                    .orderStatus(order.getOrderStatus())
-                    .orderProducts(order.getOrderProducts().stream()
-                            .map(opd -> OrderProductResDto.builder()
-                                    .seq(opd.getSeq())
-                                    .orderId(opd.getOrder().getId())
-                                    .productId(opd.getProduct().getId())
-                                    .category(opd.getCategory())
-                                    .price(opd.getPrice())
-                                    .quantity(opd.getQuantity())
-                                    .createdAt(opd.getCreatedAt())
-                                    .updatedAt(opd.getUpdatedAt())
-                                    .build())
-                            .collect(Collectors.toList()))
-                    .createdAt(order.getCreatedAt())
-                    .updatedAt(order.getUpdatedAt())
-                    .build();
-        } catch (Exception e) {
-            log.error("Error occurred while building OrderDto for order ID: {}", order.getId(), e);
             throw e;
         }
     }
