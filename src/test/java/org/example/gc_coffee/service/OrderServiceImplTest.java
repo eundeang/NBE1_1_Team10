@@ -113,17 +113,22 @@ class OrderServiceImplTest {
             }
         }
 
-    @Test
-    void testGetAllOrders_ShouldReturnListOfOrderDtos_WhenOrdersExist() {
-        // Given
-        Order order = Order.builder()
-                .id(UUID.randomUUID())
-                .email("test@example.com")
-                .address("Test Address")
-                .postcode("12345")
-                .orderStatus("PENDING")
-                .orderProducts(new ArrayList<>())
-                .build();
+        @Nested
+        @DisplayName("이메일에 해당하는 주문이 있는 경우")
+        class ContextExistOrder {
+            @Test
+            @DisplayName("저장된 모든 주문 배열을 리턴한다.")
+            void ItReturnsNotEmptyArray() {
+                orderRepository.save(
+                        Order.builder()
+                                .email(email)
+                                .build()
+                );
+                Assertions.assertEquals(orderRepository.findAll(),
+                        orderService.getOrderByEmail(email));
+            }
+        }
+    }
 
         when(orderRepository.findAllWithOrderProducts()).thenReturn(Collections.singletonList(order));
 
