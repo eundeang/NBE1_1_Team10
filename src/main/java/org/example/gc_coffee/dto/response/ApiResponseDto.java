@@ -8,26 +8,25 @@ import java.time.LocalDateTime;
 
 @NoArgsConstructor
 @Getter
-public class CommonResponseDto<T> {
+public class ApiResponseDto<T> {
     private Integer status;
     private String message;
     private T data;
     private LocalDateTime timeStamp;
 
-    public CommonResponseDto(String message, T data) {
+    public ApiResponseDto(String message, T data) {
         this.status = HttpStatus.OK.value();
         this.message = message;
         this.data = data;
         this.timeStamp = LocalDateTime.now();
     }
 
-    public CommonResponseDto(Integer status, String message, T data) {
+    public ApiResponseDto(Integer status, String message, T data) {
         this.status = status;
         this.message = message;
         this.data = data;
         this.timeStamp = LocalDateTime.now();
     }
-
 
     public HttpStatus getHttpStatus() {
         try{

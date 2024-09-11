@@ -35,12 +35,10 @@ public class OrderServiceImpl implements OrderService {
             return orders.stream()
                     .map(OrderServiceImpl::buildOrderDto)
                     .toList();
-        } catch (EntityNotFoundException e) {
-            log.error("Order not found with email: {}", email, e);
-            throw e; // 또는 적절한 사용자 정의 예외로 변경 가능
+
         } catch (Exception e) {
             log.error("Error occurred while fetching order by email: {}", email, e);
-            throw e; // 또는 적절한 사용자 정의 예외로 변경 가능
+            throw e;
         }
     }
 
@@ -56,7 +54,7 @@ public class OrderServiceImpl implements OrderService {
                     .toList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all orders", e);
-            throw e; // 또는 적절한 사용자 정의 예외로 변경 가능
+            throw e;
         }
     }
 
@@ -83,8 +81,7 @@ public class OrderServiceImpl implements OrderService {
                 Product product = productMap.get(orderProductDto.getProductId());
 
                 if (product == null) {
-                    log.error("Product not found: {}", orderProductDto.getProductId());
-                    throw new EntityNotFoundException("Product not found: " + orderProductDto.getProductId());
+                    throw new EntityNotFoundException("Product not found with ID: " + orderProductDto.getProductId());
                 }
 
                 OrderProduct orderProduct = OrderProduct.builder()
@@ -98,13 +95,14 @@ public class OrderServiceImpl implements OrderService {
             });
 
             orderRepository.save(order);
+
             log.info("Order successfully registered with ID: {}", order.getId());
         } catch (EntityNotFoundException e) {
             log.error("Error during order registration - Product not found", e);
-            throw e; // 또는 적절한 사용자 정의 예외로 변경 가능
+            throw e;
         } catch (Exception e) {
             log.error("Error occurred while registering order", e);
-            throw e; // 또는 적절한 사용자 정의 예외로 변경 가능
+            throw e;
         }
     }
 
