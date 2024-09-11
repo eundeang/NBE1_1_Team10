@@ -3,7 +3,6 @@ package org.example.gc_coffee.service;
 import jakarta.persistence.EntityNotFoundException;
 import org.example.gc_coffee.dto.request.OrderReqDto;
 import org.example.gc_coffee.dto.response.OrderResDto;
-import org.example.gc_coffee.dto.response.OrderProductResDto;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
@@ -12,7 +11,10 @@ import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;

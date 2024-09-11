@@ -1,7 +1,6 @@
 package org.example.gc_coffee.service;
 
 import jakarta.persistence.EntityNotFoundException;
-import org.example.gc_coffee.Exception.AlreadyExistsException;
 import org.example.gc_coffee.dto.response.ProductResDto;
 import org.example.gc_coffee.entity.Product;
 import org.example.gc_coffee.repository.ProductRepository;
@@ -17,7 +16,6 @@ import java.util.Optional;
 import java.util.UUID;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
