@@ -1,9 +1,6 @@
 package org.example.gc_coffee.entity;
 
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.Id;
-import jakarta.persistence.Table;
+import jakarta.persistence.*;
 import lombok.*;
 
 import java.util.UUID;
@@ -17,7 +14,7 @@ import java.util.UUID;
 @Table(name = "products")
 public class Product extends BaseEntity {
 
-    @Id
+    @Id @GeneratedValue(strategy = GenerationType.UUID)
     @Column(name = "product_id", columnDefinition = "BINARY(16)")
     private UUID id;
 
