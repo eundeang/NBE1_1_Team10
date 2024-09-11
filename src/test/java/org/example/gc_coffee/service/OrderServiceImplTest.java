@@ -52,6 +52,23 @@ class OrderServiceImplTest {
             }
         }
         verify(orderRepository, times(1)).findAllByEmailWithOrderProducts(email);
+
+        @Nested
+        @DisplayName("이메일에 해당하는 주문이 있는 경우")
+        class ContextGetOrderByValidEmail {
+            @Test
+            @DisplayName("해당 이메일이 지정한 배열을 리턴한다.")
+            void ItReturnsNotEmptyArray() {
+                orderRepository.save(
+                        Order.builder()
+                                .email(email)
+                                .build()
+                );
+                Assertions.assertEquals(orderRepository.findAllByEmailWithOrderProducts(email),
+                        orderService.getOrderByEmail(email));
+            }
+        }
+    }
     }
 
     @Test
