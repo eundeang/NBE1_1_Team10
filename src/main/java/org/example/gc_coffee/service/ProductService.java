@@ -5,7 +5,6 @@ import org.example.gc_coffee.dto.response.ProductResDto;
 import org.example.gc_coffee.entity.Product;
 
 import java.util.List;
-import java.util.Map;
 import java.util.UUID;
 
 public interface ProductService {
@@ -14,7 +13,7 @@ public interface ProductService {
 
     void registerProduct(ProductReqDto productReqDto);
 
-    Map<UUID, Product> getProductByIds(List<UUID> productIds);
+    List<Product> getProductByIds(List<UUID> productIds);
 
     ProductResDto getProductByNames(String name);
 }
