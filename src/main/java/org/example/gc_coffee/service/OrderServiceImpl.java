@@ -89,7 +89,7 @@ public class OrderServiceImpl implements OrderService {
 
                         return orderProductDto.toEntity(order, product); // DTO의 toEntity 메서드 사용
                     })
-                    .collect(Collectors.toList());
+                    .toList();
 
             // OrderReqDto의 toEntity 메서드를 사용하여 Order 엔티티 생성
 //            Order order = orderReqDto.toEntity(orderProductEntities); // DTO의 toEntity 메서드 사용

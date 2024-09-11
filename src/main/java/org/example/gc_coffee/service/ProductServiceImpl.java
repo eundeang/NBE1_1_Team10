@@ -46,7 +46,7 @@ public class ProductServiceImpl implements ProductService {
             // 엔티티 리스트를 DTO 리스트로 변환
             return products.stream()
                     .map(ProductResDto::from)
-                    .collect(Collectors.toList());
+                    .toList();
         } catch (Exception e) {
             log.error("Error occurred while fetching all products", e);
             throw e;

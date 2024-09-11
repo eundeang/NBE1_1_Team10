@@ -2,12 +2,10 @@ package org.example.gc_coffee.dto.response;
 
 import org.example.gc_coffee.dto.common.OrderStatus;
 import org.example.gc_coffee.entity.Order;
-import org.example.gc_coffee.entity.OrderProduct;
 
 import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
-import java.util.stream.Collectors;
 
 public record OrderResDto(
         UUID id,
@@ -28,7 +26,7 @@ public record OrderResDto(
     public static OrderResDto from(Order order) {
         List<OrderProductResDto> orderProductDtos = order.getOrderProducts().stream()
                 .map(OrderProductResDto::from) // 각 OrderProduct 엔티티를 OrderProductResDto로 변환
-                .collect(Collectors.toList());
+                .toList();
 
         return new OrderResDto(
                 order.getId(),
