@@ -27,6 +27,7 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 @DisplayName("OrderServiceImpl 클래스")
 class OrderServiceImplTest {
+    String email = EmailGenerator.generateRandomValidEmail();
 
     @Mock
     private OrderRepository orderRepository;
