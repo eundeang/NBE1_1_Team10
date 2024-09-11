@@ -1,14 +1,15 @@
 package org.example.gc_coffee.service;
 
-import org.example.gc_coffee.dto.OrderDto;
+import org.example.gc_coffee.dto.request.OrderReqDto;
+import org.example.gc_coffee.dto.response.OrderResDto;
 
 import java.util.List;
 
 public interface OrderService {
 
-    List<OrderDto> getOrderByEmail(String email);
+    List<OrderResDto> getOrderByEmail(String email);
 
-    List<OrderDto> getAllOrders();
+    List<OrderResDto> getAllOrders();
 
-    void registerOrder(OrderDto orderDto);
+    void registerOrder(OrderReqDto orderReqDto);
 }

@@ -1,4 +1,4 @@
-package org.example.gc_coffee.dto.response;
+package org.example.gc_coffee.dto.common;
 
 import lombok.Getter;
 import lombok.NoArgsConstructor;
