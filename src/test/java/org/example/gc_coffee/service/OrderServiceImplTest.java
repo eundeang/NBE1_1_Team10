@@ -1,9 +1,13 @@
 package org.example.gc_coffee.service;
 
+import static org.example.gc_coffee.dto.common.OrderStatus.ORDER_PLACED;
+
 import org.example.gc_coffee.dto.EmailGenerator;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.repository.OrderRepository;
+import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Nested;
 import org.junit.jupiter.api.Test;
@@ -73,6 +77,23 @@ class OrderServiceImplTest {
         @Nested
         @DisplayName("이메일에 해당하는 주문이 있는 경우")
         class ContextExistOrder {
+
+            @BeforeEach
+            void saveOrder() {
+                Order order = Order.builder()
+                        .email(email)
+                        .address("주소")
+                        .postcode("12322")
+                        .orderStatus(ORDER_PLACED)
+                        .build();
+                orderRepository.save(order);
+            }
+
+            @AfterEach
+            void DeleteAllOrders() {
+                orderRepository.deleteAll();
+            }
+
             @Test
             @DisplayName("저장된 모든 주문 배열을 리턴한다.")
             void ItReturnsNotEmptyArray() {
