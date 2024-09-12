@@ -1,5 +1,6 @@
 package org.example.gc_coffee.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.example.gc_coffee.entity.Order;
@@ -8,6 +9,7 @@ import org.example.gc_coffee.entity.Product;
 
 import java.util.UUID;
 
+@Schema(description = "OrderProduct create request")
 public record OrderProductReqDto(
         @NotNull(message = "상품 ID를 입력해주세요.")
         UUID productId,
@@ -18,6 +20,7 @@ public record OrderProductReqDto(
         @NotNull(message = "가격을 입력해주세요.")
         Long price,
 
+        @Schema(description = "상품 수량 정보", implementation = OrderProduct.class)
         @NotNull(message = "수량을 입력해주세요.")
         Integer quantity
 ) {

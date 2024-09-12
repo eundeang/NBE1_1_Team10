@@ -1,5 +1,6 @@
 package org.example.gc_coffee.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.example.gc_coffee.dto.common.OrderStatus;
 import org.example.gc_coffee.entity.Order;
 
@@ -7,6 +8,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.UUID;
 
+@Schema(description = "Order api response request")
 public record OrderResDto(
         UUID id,
         String email,

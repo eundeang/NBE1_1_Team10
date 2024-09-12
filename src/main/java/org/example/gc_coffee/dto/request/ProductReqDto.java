@@ -1,9 +1,11 @@
 package org.example.gc_coffee.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.example.gc_coffee.entity.Product;
 
+@Schema(description = "Product create request")
 public record ProductReqDto(
         @NotBlank(message = "제품명을 입력해주세요.")
         String name,
