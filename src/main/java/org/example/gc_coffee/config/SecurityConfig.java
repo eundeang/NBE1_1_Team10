@@ -21,7 +21,7 @@ public class SecurityConfig {
                 .httpBasic(AbstractHttpConfigurer::disable) // Basic 인증 환경이 아니라 JWT 토큰이니까 Basic 모드 비활성화
                 .sessionManagement(AbstractHttpConfigurer::disable) // session 기반 인증 비활성화 (JWT 기반)
                 .authorizeHttpRequests(req ->
-                        req.requestMatchers("/**").permitAll()
+                        req.requestMatchers("**").permitAll()
                 )
                 .build();
     }

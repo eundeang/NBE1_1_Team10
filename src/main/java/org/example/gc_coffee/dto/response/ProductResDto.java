@@ -1,9 +1,12 @@
 package org.example.gc_coffee.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.example.gc_coffee.entity.Product;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+
+@Schema(description = "Product api response request")
 public record ProductResDto(
         UUID id,
         String name,

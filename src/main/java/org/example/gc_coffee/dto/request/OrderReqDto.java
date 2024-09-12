@@ -1,5 +1,6 @@
 package org.example.gc_coffee.dto.request;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import jakarta.validation.Valid;
 import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
@@ -10,6 +11,7 @@ import org.example.gc_coffee.entity.OrderProduct;
 
 import java.util.List;
 
+@Schema(description = "Order create request")
 public record OrderReqDto(
         @NotBlank(message = "이메일을 입력해주세요.")
         @Pattern(
