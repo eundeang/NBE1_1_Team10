@@ -14,14 +14,12 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(BadRequestException.class)
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ApiResponseDto<?> handleBadRequestException(final BadRequestException e) {
-        log.warn(e.getMessage(), e);
         return new ApiResponseDto<>(e.getCode(), e.getMessage(), null);
     }
 
     @ExceptionHandler(InternalServerErrorException.class)
     @ResponseStatus(HttpStatus.INTERNAL_SERVER_ERROR)
     public ApiResponseDto<?> handleInternalServerErrorException(final InternalServerErrorException e) {
-        log.warn(e.getMessage(), e);
         return new ApiResponseDto<>(e.getCode(), e.getMessage(), null);
     }
 
