@@ -20,9 +20,9 @@ OpenAPI (Springdoc OpenAPI)
 
 
 ## 🛠️ 프로젝트 구현 사항
-1. Fetch Join을 활용한 QueryDSL 쿼리 관리<!--여기에 pr 링크 걸어주세욥 -->
+1. Fetch Join을 활용한 QueryDSL 쿼리 관리<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/13
 
-3. Swagger를 통한 API 명세서 작성<!--여기에 pr 링크 걸어주세욥 -->
+3. Swagger를 통한 API 명세서 작성<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/11
 
 5. 시간 측정 AOP<!--여기에 pr 링크 걸어주세욥 -->
 
