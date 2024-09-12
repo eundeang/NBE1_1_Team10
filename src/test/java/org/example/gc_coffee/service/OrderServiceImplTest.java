@@ -2,9 +2,18 @@ package org.example.gc_coffee.service;
 
 import static org.example.gc_coffee.dto.common.OrderStatus.ORDER_PLACED;
 
+import jakarta.persistence.EntityNotFoundException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.UUID;
+import org.aspectj.lang.annotation.Before;
 import org.example.gc_coffee.dto.EmailGenerator;
+import org.example.gc_coffee.dto.request.OrderProductReqDto;
+import org.example.gc_coffee.dto.request.OrderReqDto;
+import org.example.gc_coffee.dto.request.ProductReqDto;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.repository.OrderRepository;
+import org.example.gc_coffee.repository.ProductRepository;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
@@ -23,6 +32,9 @@ class OrderServiceImplTest {
 
     @Mock
     private OrderRepository orderRepository;
+
+    @Mock
+    private ProductRepository productRepository;
 
     @Mock
     private ProductService productService;
@@ -114,25 +126,80 @@ class OrderServiceImplTest {
         @Nested
         @DisplayName("주문 내역에 물품이 하나도 없을 경우")
         class ContextNoItem {
-            //TODO: DTO 넣기
+            OrderReqDto orderReqDto;
+            @BeforeEach
+            void makeInvalidRequest() {
+                OrderProductReqDto orderProductReqDto =OrderProductReqDto.of(
+                        UUID.randomUUID(),
+                        "커피",
+                        12000L,
+                        1
+                );
+                List<OrderProductReqDto> orderProductReqDtoList = new ArrayList<>();
+                orderProductReqDtoList.add(orderProductReqDto);
+                orderReqDto = OrderReqDto.of(
+                        email,
+                        "주소입니다",
+                        "12321",
+                        orderProductReqDtoList
+
+                );
+            }
+            @AfterEach
+            void deleteOrder() {
+                productRepository.deleteAll();
+                orderRepository.deleteAll();
+            }
+
             @Test
-            @DisplayName("빈 배열을 리턴한다.")
+            @DisplayName("EntityNotFoundException을 리턴한다.")
             void ItReturnsAnEmptyList() {
-                Assertions.assertTrue(orderService.getAllOrders().isEmpty());
+                Assertions.assertThrows(EntityNotFoundException.class, () -> orderService.registerOrder(orderReqDto));
             }
         }
 
         @Nested
         @DisplayName("이메일에 해당하는 주문이 있는 경우")
         class ContextExistOrder {
+
+            OrderReqDto orderReqDto;
+
+            @BeforeEach
+            void makeValidRequest() {
+                ProductReqDto productReqDto = ProductReqDto.of(
+                     "콜롬비아 원두",
+                        "원두",
+                        10000L,
+                        "참 힘들아여"
+                );
+                productService.registerProduct(productReqDto);
+
+                OrderProductReqDto orderProductReqDto =OrderProductReqDto.of(
+                        UUID.randomUUID(),
+                        "커피",
+                        12000L,
+                        1
+                );
+                List<OrderProductReqDto> orderProductReqDtoList = new ArrayList<>();
+                orderProductReqDtoList.add(orderProductReqDto);
+                orderReqDto = OrderReqDto.of(
+                        email,
+                        "주소입니다",
+                        "12321",
+                        orderProductReqDtoList
+                );
+                orderService.registerOrder(orderReqDto);
+            }
+
+
+            @AfterEach
+            void deleteProductAndOrder() {
+                productRepository.deleteAll();
+                orderRepository.deleteAll();
+            }
             @Test
             @DisplayName("저장된 모든 주문 배열을 리턴한다.")
             void ItReturnsNotEmptyArray() {
-                orderRepository.save(
-                        Order.builder()
-                                .email(email)
-                                .build()
-                );
                 Assertions.assertEquals(orderRepository.findAll(),
                         orderService.getOrderByEmail(email));
             }
