@@ -1,5 +1,6 @@
 package org.example.gc_coffee.dto.response;
 
+import io.swagger.v3.oas.annotations.media.Schema;
 import org.example.gc_coffee.entity.Order;
 import org.example.gc_coffee.entity.OrderProduct;
 import org.example.gc_coffee.entity.Product;
@@ -7,6 +8,7 @@ import org.example.gc_coffee.entity.Product;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
+@Schema(description = "OrderProduct api response request")
 public record OrderProductResDto(
         Long seq,
         UUID orderId,

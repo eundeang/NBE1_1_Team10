@@ -1,5 +1,7 @@
 package org.example.gc_coffee.controller;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.responses.ApiResponse;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.example.gc_coffee.dto.request.OrderReqDto;
@@ -17,18 +19,24 @@ public class OrderController {
 
     private final OrderService orderService;
 
+    @Operation(summary = "getOrderByEmail", description = "Email을 통한 주문 검색")
+    @ApiResponse(responseCode = "200", description = "성공")
     @GetMapping("/{email}")
     public ApiResponseDto<List<OrderResDto>> getOrderByEmail(@PathVariable(value = "email") String email) {
         List<OrderResDto> orderResDtoList = orderService.getOrderByEmail(email);
         return new ApiResponseDto<>("Order retrieved successfully", orderResDtoList);
     }
 
+    @Operation(summary = "getAllOrder", description = "모든 주문 데이터 조회")
+    @ApiResponse(responseCode = "200", description = "성공")
     @GetMapping("/all")
     public ApiResponseDto<List<OrderResDto>> getAllOrder() {
         List<OrderResDto> orders = orderService.getAllOrders();
         return new ApiResponseDto<>("Orders retrieved successfully", orders);
     }
 
+    @Operation(summary = "registerOrder", description = "주문 데이터 생성")
+    @ApiResponse(responseCode = "201", description = "성공")
     @PostMapping
     public ApiResponseDto<String> registerOrder(@RequestBody @Valid OrderReqDto orderReqDto) {
         orderService.registerOrder(orderReqDto);
