@@ -16,4 +16,8 @@ public interface ProductService {
     List<Product> getProductByIds(List<UUID> productIds);
 
     ProductResDto getProductByNames(String name);
+
+    void modifyProduct(ProductReqDto productReqDto, UUID productId);
+
+    void deleteProduct(UUID id);
 }
