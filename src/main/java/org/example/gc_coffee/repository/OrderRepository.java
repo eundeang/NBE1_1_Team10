@@ -9,12 +9,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.UUID;
 
-public interface OrderRepository  extends JpaRepository<Order, UUID> {
+public interface OrderRepository  extends JpaRepository<Order, UUID>, DslOrderRepository{
     Optional<Order> findByEmail(String email);
 
-    @Query("SELECT o FROM Order o JOIN FETCH o.orderProducts WHERE o.email = :email")
-    List<Order> findAllByEmailWithOrderProducts(@Param("email") String email);
 
-    @Query("SELECT o FROM Order o JOIN FETCH o.orderProducts")
-    List<Order> findAllWithOrderProducts();
 }
