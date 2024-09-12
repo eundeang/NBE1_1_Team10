@@ -13,9 +13,7 @@ import org.springframework.stereotype.Service;
 import java.util.List;
 import java.util.UUID;
 
-import static org.example.gc_coffee.Exception.ExceptionCode.NOT_FOUND_PRODUCT_ID;
-import static org.example.gc_coffee.Exception.ExceptionCode.DUPLICATED_PRODUCT_NAME;
-import static org.example.gc_coffee.Exception.ExceptionCode.INTERNAL_SERVER_ERROR;
+import static org.example.gc_coffee.Exception.ExceptionCode.*;
 
 @Service
 @RequiredArgsConstructor
@@ -79,16 +77,13 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    @Override
     public void modifyProduct(ProductReqDto productReqDto, UUID productId) {
         try{
             // 수정하려는 제품이 존재하는 지 확인
-            boolean exists = productRepository.existsByName(productReqDto.name());
+            boolean exists = productRepository.existsById(productId);
             if (!exists) {
-                throw new EntityNotFoundException("Product with this name does not exist.");
-            }
-
-            if(productId == null){
-                throw new EntityNotFoundException("Product id cannot be null.");
+                throw new BadRequestException(NOT_FOUND_PRODUCT_ID);
             }
 
             // id외의 다른 data만 변경하여 엔티티 생성
@@ -96,31 +91,32 @@ public class ProductServiceImpl implements ProductService {
 
             productRepository.save(product);
             log.info("Product has been Modified Successfully with ID: {}", product.getId());
-        } catch (EntityNotFoundException e) { //
+        } catch (BadRequestException e) { //
             log.warn("Error editing product - Product does not exist.", e);
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while editing the product.", e);
-            throw e;
+            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR);
         }
     }
 
+    @Override
     public void deleteProduct(UUID id) {
         try{
             // 수정하려는 제품이 존재하는 지 확인 //id가 null일 경우에는?
             boolean exists = productRepository.existsById(id);
             if (!exists) {
-                throw new EntityNotFoundException("Product with this name does not exist.");
+                throw new BadRequestException(NOT_FOUND_PRODUCT_ID);
             }
 
             productRepository.deleteById(id);
             log.info("Product has been successfully deleted with ID:: {}", id);
-        } catch (EntityNotFoundException e) { //
+        } catch (BadRequestException e) { //
             log.warn("Error editing product - Product does not exist.", e);
             throw e;
         } catch (Exception e) {
             log.error("Error occurred while editing the product.", e);
-            throw e;
+            throw new InternalServerErrorException(INTERNAL_SERVER_ERROR);
         }
     }
 
