@@ -24,22 +24,28 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.boot.test.mock.mockito.MockBean;
 
-@ExtendWith(MockitoExtension.class)
+@SpringBootTest
 @DisplayName("OrderServiceImpl 클래스")
 class OrderServiceImplTest {
+    private static final Logger log = LoggerFactory.getLogger(OrderServiceImplTest.class);
     String email = EmailGenerator.generateRandomValidEmail();
 
-    @Mock
+    @Autowired
     private OrderRepository orderRepository;
 
-    @Mock
+    @Autowired
     private ProductRepository productRepository;
 
-    @Mock
+    @Autowired
     private ProductService productService;
 
-    @InjectMocks
+    @Autowired
     private OrderServiceImpl orderService;
 
     @Nested
@@ -109,11 +115,12 @@ class OrderServiceImplTest {
             @Test
             @DisplayName("저장된 모든 주문 배열을 리턴한다.")
             void ItReturnsNotEmptyArray() {
-                orderRepository.save(
+                Order order = orderRepository.save(
                         Order.builder()
                                 .email(email)
                                 .build()
                 );
+                System.out.println("order = " + order);
                 Assertions.assertEquals(orderRepository.findAll(),
                         orderService.getOrderByEmail(email));
             }
