@@ -5,6 +5,8 @@ import jakarta.validation.constraints.NotBlank;
 import jakarta.validation.constraints.NotNull;
 import org.example.gc_coffee.entity.Product;
 
+import java.util.UUID;
+
 @Schema(description = "Product create request")
 public record ProductReqDto(
         @NotBlank(message = "제품명을 입력해주세요.")
@@ -27,6 +29,16 @@ public record ProductReqDto(
     // DTO로부터 엔티티 생성하는 메서드 toEntity
     public Product toEntity() {
         return Product.builder()
+                .name(name)
+                .category(category)
+                .price(price)
+                .description(description)
+                .build();
+    }
+
+    public Product toEntity(UUID productId){
+        return Product.builder()
+                .id(productId)
                 .name(name)
                 .category(category)
                 .price(price)

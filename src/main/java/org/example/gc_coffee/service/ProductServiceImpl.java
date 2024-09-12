@@ -79,6 +79,51 @@ public class ProductServiceImpl implements ProductService {
         }
     }
 
+    public void modifyProduct(ProductReqDto productReqDto, UUID productId) {
+        try{
+            // 수정하려는 제품이 존재하는 지 확인
+            boolean exists = productRepository.existsByName(productReqDto.name());
+            if (!exists) {
+                throw new EntityNotFoundException("Product with this name does not exist.");
+            }
+
+            if(productId == null){
+                throw new EntityNotFoundException("Product id cannot be null.");
+            }
+
+            // id외의 다른 data만 변경하여 엔티티 생성
+            Product product = productReqDto.toEntity(productId);
+
+            productRepository.save(product);
+            log.info("Product has been Modified Successfully with ID: {}", product.getId());
+        } catch (EntityNotFoundException e) { //
+            log.warn("Error editing product - Product does not exist.", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while editing the product.", e);
+            throw e;
+        }
+    }
+
+    public void deleteProduct(UUID id) {
+        try{
+            // 수정하려는 제품이 존재하는 지 확인 //id가 null일 경우에는?
+            boolean exists = productRepository.existsById(id);
+            if (!exists) {
+                throw new EntityNotFoundException("Product with this name does not exist.");
+            }
+
+            productRepository.deleteById(id);
+            log.info("Product has been successfully deleted with ID:: {}", id);
+        } catch (EntityNotFoundException e) { //
+            log.warn("Error editing product - Product does not exist.", e);
+            throw e;
+        } catch (Exception e) {
+            log.error("Error occurred while editing the product.", e);
+            throw e;
+        }
+    }
+
     @Override
     public List<Product> getProductByIds(List<UUID> productIds) {
         try {

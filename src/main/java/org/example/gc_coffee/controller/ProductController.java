@@ -10,6 +10,7 @@ import org.example.gc_coffee.service.ProductService;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.UUID;
 
 @RestController
 @RequestMapping("/product")
@@ -41,5 +42,17 @@ public class ProductController {
     public ApiResponseDto<String> registerProduct(@RequestBody ProductReqDto productReqDto) {
         productService.registerProduct(productReqDto);
         return new ApiResponseDto<>(201,"Product registered successfully", null);
+    }
+
+    @PutMapping("{product_id}")
+    public ApiResponseDto<String> modifyProduct(@RequestBody ProductReqDto productReqDto, @PathVariable(value = "product_id") UUID id) {
+        productService.modifyProduct(productReqDto, id);
+        return new ApiResponseDto<>(200,"Product Modified successfully", null);
+    }
+
+    @DeleteMapping("/{product_id}")
+    public ApiResponseDto<String> deleteProduct(@PathVariable(value = "product_id") UUID id) {
+        productService.deleteProduct(id);
+        return new ApiResponseDto<>(200,"Product Modified successfully", null);
     }
 }
