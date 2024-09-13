@@ -26,7 +26,7 @@ OpenAPI (Springdoc OpenAPI)
 
 5. 시간 측정 AOP<!--여기에 pr 링크 걸어주세욥 -->
 
-7. SLF4J - logback-spring.xml 을 통한 커스텀 설정<!--여기에 pr 링크 걸어주세욥 -->
+7. SLF4J - logback-spring.xml 을 통한 커스텀 설정<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/5
 
 9. DCI 패턴을 이용한 Test code 작성 https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/12
 
