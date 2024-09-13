@@ -24,7 +24,7 @@ OpenAPI (Springdoc OpenAPI)
 
 3. Swagger를 통한 API 명세서 작성<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/11
 
-5. 시간 측정 AOP<!--여기에 pr 링크 걸어주세욥 -->
+5. 시간 측정 AOP<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/14
 
 7. SLF4J - logback-spring.xml 을 통한 커스텀 설정<!--여기에 pr 링크 걸어주세욥 --> https://github.com/prgrms-be-devcourse/NBE1_1_Team10/pull/5
 
